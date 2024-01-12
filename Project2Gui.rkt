@@ -16,5 +16,18 @@
 ;    - struct with args (current_location, desired_location, distance)?
 ;  - Use vectors
 
-
 (require racket/gui/base)
+
+(define mainFrame (new frame% [label "Main Frame"]))
+
+(define centrePanel (new panel%
+                         [parent mainFrame]
+                         [min-width 200]
+                         [min-height 200]))
+
+(define testButton (new button%
+                        [label "Test"]
+                        [parent centrePanel]))                   
+                        
+(send mainFrame show #t)
+(send mainFrame resize 640 480)
