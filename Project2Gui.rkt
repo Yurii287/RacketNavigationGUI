@@ -16,18 +16,33 @@
 ;    - struct with args (current_location, desired_location, distance)?
 ;  - Use vectors
 
+; create function to set variable as start_location and end_location
+
 (require racket/gui/base)
 
-(define mainFrame (new frame% [label "Main Frame"]))
+(define mainFrame (new frame%
+                       [label "Racket GUI Navigation"]))
 
-(define centrePanel (new panel%
-                         [parent mainFrame]
-                         [min-width 200]
-                         [min-height 200]))
+(define titlePanel (new panel%
+                        [parent mainFrame]
+                        [alignment '(center top)]
+                        [stretchable-width #f]
+                        [stretchable-height #f]
+                        [min-height 50]))
 
-(define testButton (new button%
-                        [label "Test"]
-                        [parent centrePanel]))                   
-                        
+(define inputPanel (new vertical-panel%
+                        [parent mainFrame]
+                        [alignment '(center center)]))
+
+(define start_location (new text-field%
+                            [label "Start Location"]
+                            [parent inputPanel]
+                            [stretchable-width #f]))
+
+(define end_location (new text-field%
+                          [label "Destination"]
+                          [parent inputPanel]
+                          [stretchable-width #f]))
+
 (send mainFrame show #t)
-(send mainFrame resize 640 480)
+(send mainFrame resize 390 844)
