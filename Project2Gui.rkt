@@ -40,5 +40,15 @@
                           [parent inputPanel]
                           [stretchable-width #f]))
 
+(define msg (new message%
+                 [parent inputPanel]
+                 [label "Starting Test"]))
+
+(new button%
+     [parent inputPanel]
+     [label "Start"]
+     [callback (lambda (o e)
+                 (print (send start_location get-value)))])
+
 (send mainFrame show #t)
 (send mainFrame resize 390 844)
