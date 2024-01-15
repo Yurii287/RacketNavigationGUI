@@ -18,21 +18,17 @@
 
 ; create function to set variable as start_location and end_location
 
+
+
 (require racket/gui/base)
 
 (define mainFrame (new frame%
                        [label "Racket GUI Navigation"]))
 
-(define titlePanel (new panel%
-                        [parent mainFrame]
-                        [alignment '(center top)]
-                        [stretchable-width #f]
-                        [stretchable-height #f]
-                        [min-height 50]))
-
 (define inputPanel (new vertical-panel%
                         [parent mainFrame]
-                        [alignment '(center center)]))
+                        [alignment '(center center)]
+                        [style (list 'border)]))
 
 (define start_location (new text-field%
                             [label "Start Location"]
@@ -40,7 +36,7 @@
                             [stretchable-width #f]))
 
 (define end_location (new text-field%
-                          [label "Destination"]
+                          [label "End Location"]
                           [parent inputPanel]
                           [stretchable-width #f]))
 
