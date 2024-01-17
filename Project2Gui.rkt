@@ -1,4 +1,5 @@
 #lang racket/gui
+(require racket/gui/base)
 
 ; Input field for destination and current location
 ; Input field for what comfort level they desire
@@ -6,49 +7,32 @@
 ;  Car - returns roads to take
 ;  Bus - returns bus stops that lead to the destination
 ;  Train - returns train stops that lead to the destination
-;  Walk - returns the paths to walk to a destination
 ; Return a list of directions between those places that guide the user
 ;  - Use information from OpenStreetMaps if possible
-; A* Algorithm for finding the shortest distance between places
-;  - Explain why this and not other algorithms
 ; Use/Create Data structures that capture a the path of the journey
-;  - Create our own
-;    - struct with args (current_location, desired_location, distance)?
-;  - Use vectors
 
-; create function to set variable as start_location and end_location
+; potentially use binary search to find the index of the start and end locations
+;  - use vector
+;(station-position (vector-ref stations 0))
 
+(struct station (name position))
 
+(define start_location "C")
+(define end_location "")
 
-(require racket/gui/base)
+(define get_start_location (lambda (x)
+                             (set! start_location x)))
 
-(define mainFrame (new frame%
-                       [label "Racket GUI Navigation"]))
+(define get_end_location (lambda (x)
+                           (set! end_location x)))
 
-(define inputPanel (new vertical-panel%
-                        [parent mainFrame]
-                        [alignment '(center center)]
-                        [style (list 'border)]))
+(define get_start_station (lambda (start station_list)
+                            (cond
+                              ([equal? start (station-name (vector-ref stations (round (/ (vector-length stations) 2))))] #t))))
 
-(define start_location (new text-field%
-                            [label "Start Location"]
-                            [parent inputPanel]
-                            [stretchable-width #f]))
-
-(define end_location (new text-field%
-                          [label "End Location"]
-                          [parent inputPanel]
-                          [stretchable-width #f]))
-
-(define msg (new message%
-                 [parent inputPanel]
-                 [label "Starting Test"]))
-
-(new button%
-     [parent inputPanel]
-     [label "Start"]
-     [callback (lambda (o e)
-                 (print (send start_location get-value)))])
-
-(send mainFrame show #t)
-(send mainFrame resize 390 844)
+(define stations (vector
+                  (station "A" 1)
+                  (station "B" 2)
+                  (station "C" 3)
+                  (station "D" 4)
+                  (station "E" 5)))
