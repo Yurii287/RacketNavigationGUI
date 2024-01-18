@@ -4,20 +4,15 @@
 ; Input field for destination and current location
 ; Input field for what comfort level they desire
 ; Input field for what transport they will be taking: car, bus, train
-;  Car - returns roads to take
 ;  Bus - returns bus stops that lead to the destination
 ;  Train - returns train stops that lead to the destination
+
 ; Return a list of directions between those places that guide the user
-;  - Use information from OpenStreetMaps if possible
 ; Use/Create Data structures that capture a the path of the journey
 
-; potentially use binary search to find the index of the start and end locations
-;  - use vector
-;(station-position (vector-ref stations 0))
+(struct station (name prev_station next_station))
 
-(struct station (name position))
-
-(define start_location "C")
+(define start_location "")
 (define end_location "")
 
 (define get_start_location (lambda (x)
@@ -26,13 +21,13 @@
 (define get_end_location (lambda (x)
                            (set! end_location x)))
 
-(define get_start_station (lambda (start station_list)
+(define find_start_station (lambda (query station_list)
                             (cond
-                              ([equal? start (station-name (vector-ref stations (round (/ (vector-length stations) 2))))] #t))))
-
-(define stations (vector
-                  (station "A" 1)
-                  (station "B" 2)
-                  (station "C" 3)
-                  (station "D" 4)
-                  (station "E" 5)))
+                              ([equal? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query))))
+(define stations (list
+                  (station "A" "" "B")
+                  (station "B" "A" "C")
+                  (station "C" "B" "D")
+                  (station "D" "C" "E")
+                  (station "E" "D" "")))
