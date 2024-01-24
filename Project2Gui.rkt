@@ -16,18 +16,38 @@
 (define end_location "")
 
 (define get_start_location (lambda (x)
-                             (set! start_location x)))
+                             (set! start_location x)
+                             )
+  )
 
 (define get_end_location (lambda (x)
-                           (set! end_location x)))
+                           (set! end_location x)
+                           )
+  )
 
 (define find_start_station (lambda (query station_list)
                             (cond
                               ([equal? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query))))
+                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              ([string>? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              )
+                             )
+  )
+
+(define find_end_station (lambda (query station_list)
+                            (cond
+                              ([equal? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              ([string>? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              )
+                             )
+  )
+
 (define stations (list
                   (station "A" "" "B")
                   (station "B" "A" "C")
                   (station "C" "B" "D")
                   (station "D" "C" "E")
-                  (station "E" "D" "")))
+                  (station "E" "D" "")
+                  )
+  )
