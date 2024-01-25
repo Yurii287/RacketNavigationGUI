@@ -10,7 +10,7 @@
 ; Return a list of directions between those places that guide the user
 ; Use/Create Data structures that capture a the path of the journey
 
-(struct station (name prev_station next_station))
+(struct station (name))
 
 (define start_location "")
 (define end_location "")
@@ -27,27 +27,11 @@
 
 (define find_start_station (lambda (query station_list)
                             (cond
-                              ([equal? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              ([string>? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
+                              ([equal? query (station-name (list-ref station_list (round (/ (length station_list) 2))))] query)
+                              ([string<? query (station-name (list-ref station_list (round (/ (length station_list) 2))))] query)
+                              ([string>? query (station-name (list-ref station_list (round (/ (length station_list) 2))))] query)
                               )
                              )
   )
 
-(define find_end_station (lambda (query station_list)
-                            (cond
-                              ([equal? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              ([string<? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              ([string>? query (station-name (list-ref stations (round (/ (length stations) 2))))] query)
-                              )
-                             )
-  )
-
-(define stations (list
-                  (station "A" "" "B")
-                  (station "B" "A" "C")
-                  (station "C" "B" "D")
-                  (station "D" "C" "E")
-                  (station "E" "D" "")
-                  )
-  )
+(define station_BST (list (station "C") (list (station "B") (list (station "A")) '()) (list (station "D") '() (list (station "E")))))
