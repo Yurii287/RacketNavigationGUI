@@ -36,7 +36,7 @@
 
 ;grand-children + (remove n) = grandchildren without source node
 (define grand-children (lambda (n graph)
-                         (flatten (map (lambda (node) (children node graph)) (children n graph)))))
+                         (remove n (flatten (map (lambda (node) (children node graph)) (children n graph))))))
 
 (define weight (lambda (n1 n2 graph)
                  (first (reverse (edge n1 n2 graph)))))
@@ -45,13 +45,13 @@
 
 ;get-path
 ; is n2 a child or n1?
-; if not, add n1 to a list, call the function again with a child of n1
+; if not, add n1 to a list, call the function sagain with a child of n1
 ; each iteration append n1 to a list to create the list of directions
 
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
-                     ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] directions)
-                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 (first (children n1 graph)) n2 graph (cons n2 directions)))
+                     ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (reverse directions))
+                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 (first (children n1 graph)) n2 graph (cons n2 (cons n1 directions))))
                      (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
                     )
