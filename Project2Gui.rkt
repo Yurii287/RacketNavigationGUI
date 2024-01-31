@@ -1,7 +1,6 @@
 #lang racket/gui
 (require racket/gui/base)
 (require racket/trace)
-;https://planet.racket-lang.org/package-source/jaymccarthy/dijkstra.plt/1/1/planet-docs/dijkstra/index.html
 
 (define a-graph (list
                  (list "A" "C" 50)
@@ -52,14 +51,15 @@
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] directions)
-                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 (first (children n1 graph)) n2 graph (cons n1 (cons n2 directions))))
+                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 (first (children n1 graph)) n2 graph (cons n2 directions)))
+                     (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
                     )
   )
 
 (define get-path (lambda (n1 n2)
                    (cond
-                     ([equal? n1 n2] n1)
+                     ([equal? n1 n2] "You are at your destination")
                      ([equal? #t (not (not (member n2 (children n1 a-graph))))] (edge n1 n2 a-graph))
                      (else
                       (get-path1 n1 n2 a-graph '()))
