@@ -51,7 +51,7 @@
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (reverse directions))
-                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 (first (children n1 graph)) n2 graph (cons n2 (cons n1 directions))))
+                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 n1 n2 graph (cons n2 (cons n1 directions))))
                      (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
                     )
