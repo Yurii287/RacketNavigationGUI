@@ -40,13 +40,6 @@
 (define weight (lambda (n1 n2 graph)
                  (first (reverse (edge n1 n2 graph)))))
 
-;example A - D
-
-;get-path
-; is n2 a child or n1?
-; if not, add n1 to a list, call the function sagain with a child of n1
-; each iteration append n1 to a list to create the list of directions
-
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (reverse directions))
