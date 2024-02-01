@@ -52,6 +52,7 @@
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (reverse directions))
                      ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 n1 n2 graph (cons n2 (cons n1 directions))))
                      ([equal? #t (not (not (member n1 directions)))] (get-path1 (first (reverse (children n1 graph))) n2 graph (cons n1 directions)))
+                     ([equal? #t (not (not (member n1 directions)))] (get-path1 (first (rest (children n1 graph))) n2 graph (cons n1 directions)))
                      (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
                     )
@@ -103,6 +104,7 @@
 "Colindale"
 "Burnt Oak"
 "Edgware"))
+
 (define journey(list "Hendon Central" "Brent Cross"))
  ;(send my-box get-string (send my-box get-selection))
 (define choiceschoices(list "Field" "field" "field"))
@@ -171,7 +173,7 @@
 
 (define panel1(new panel%
                    [parent frame]
-                   [alignment '(left bottom)]
+                   [alignment '(center bottom)]
                    [min-height 300]
                    	[style (list 'border )]
                    ))
@@ -191,36 +193,19 @@
                    	[style (list 'border )]
                    ))
 
-(define combo-field (new text-field%
-                         (label "Combo")
-                         (parent panel1)
-                         (callback (lambda (t e) (send starting_location clear) (cond
-                                                                       ((not (non-empty-string? (send combo-field get-value))) (for ([i (list "Apples" "Pears" "Pomegranate")]) (send starting_location append i)) )
-                                                                       ((and (non-empty-string? (send combo-field get-value)) (empty? (filter (λ (x) (equal? (string-ref x 0) (char-upcase (string-ref (send combo-field get-value) 0)) )) (list "Apples" "Pears" "Pomegranate")))) (for ([i (list "Apples" "Pears" "Pomegranate")]) (send starting_location append i)))
-                                                                       (else (for ([i (filter (λ (x) (equal? (string-ref x 0) (char-upcase (string-ref (send combo-field get-value) 0)) )) (list "Apples" "Pears" "Pomegranate"))]) (send starting_location append i) ))
-                                                                       
-                                                                       )))
-                         ;(choices choiceschoices)
-                         (init-value "Field")))
+
+                       
 (define starting_location
   (new choice% [parent panel1]
-       (vert-margin 50)
+       
        [label "Some choices"]
        [choices train_lines]))
 (define destination
   (new choice% [parent panel2]
-       (vert-margin 50)
+       
        [label "Some choices"]
        [choices train_lines]))
-(define combo-field2 (new text-field%
-                         (label "Combo")
-                         (parent panel2)
-                         
 
-
-                         
-                         ;(choices (list "Field" "field" "field"))
-                         (init-value "Field")))
 (define button (new button%
                     (parent panel2)
                     (label "Button")
@@ -229,9 +214,7 @@
    	 	(min-height 50)
                 (callback (lambda (button event)
                         (cond
-                          ((equal? (send combo-field get-value) (send combo-field2 get-value)) (send frame3 show #t))
-                          ((not(empty? (filter (λ (x) (or (equal? (send combo-field get-value) x) (equal? (send combo-field2 get-value) x) )) train_lines))) (send list-box set journey) (send frame show #f) (send frame2 show #t))
-                          
+                         
                           )))))
 (define message (new message%
                      (parent panel2)
