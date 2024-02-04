@@ -8,7 +8,8 @@
                  (list "C" "E" 20) (list "C" "A" 50)
                  (list "D" "E" 35) (list "D" "B" 40)
                  (list "E" "F" 100) (list "E" "C" 20) (list "E" "D" 35)
-                 (list "F" "E" 100)
+                 (list "F" "E" 100) (list "F" "G" 20)
+                 (list "G" "F" 20)
                  ))
 
 (define nodes (lambda (graph)
@@ -34,25 +35,28 @@
 (define leaf (lambda (n graph)
                (null? (children n graph))))
 
-;grand-children + (remove n) = grandchildren without source node
 (define grand-children (lambda (n graph)
                          (remove n (flatten (map (lambda (node) (children node graph)) (children n graph))))))
 
 (define weight (lambda (n1 n2 graph)
                  (first (reverse (edge n1 n2 graph)))))
 
-;example A - D
-
-;get-path
-; is n2 a child or n1?
-; if not, add n1 to a list, call the function sagain with a child of n1
-; each iteration append n1 to a list to create the list of directions
+(define branch (lambda (n graph branch-nodes)
+                 (cond
+                   ([equal? n "E"] branch-nodes)
+                   ([not (equal? n "E")] (branch (first (children n graph)) graph (cons n branch-nodes)))
+                   )
+                 )
+  )
 
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
-                     ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (reverse directions))
-                     ([equal? #t (not (not (member n2 (children n1 graph))))] (get-path1 n1 n2 graph (cons n2 (cons n1 directions))))
-                     ([equal? #t (not (not (member n1 directions)))] (get-path1 (first (reverse (children n1 graph))) n2 graph (cons n1 directions)))
+                     ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (remove-duplicates (reverse directions)))
+                     ([not (not (member n2 (children n1 graph)))] (get-path1 n1 n2 graph (cons n2 (cons n1 directions))))
+                     ([and (equal? n1 "E") (not (not (member n2 (branch "A" graph '()))))] (get-path1 (second (children "E" graph)) n2 graph (cons n1 directions)))
+                     ([and (equal? n1 "E") (not (not (member n2 (branch "B" graph '()))))] (get-path1 (third (children "E" graph)) n2 graph (cons n1 directions))) 
+                     ([and (equal? n1 "E") (not (not (member n2 (branch "G" graph '()))))] (get-path1 (first (children "E" graph)) n2 graph (cons n1 directions))) 
+                     ([not (not (member (first (children n1 graph)) directions))] (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
                     )
