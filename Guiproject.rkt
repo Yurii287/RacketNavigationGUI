@@ -8,6 +8,7 @@
     (define/public line_name_get(λ () line_name))
     (define/public train_stations_get(λ () (for/list ([ i train_stations]) (car i))))
     (define/public step_free_get(λ (x) (for/list ([i x]) (cond ((equal? #t (first(cdr (assoc i train_stations)))) "Yes") (else "No")   ))))
+    (define/public step_free(λ (x) (cond ( (pair? (assoc x train_stations))(first (cdr (assoc x train_stations)))) (else #f)) ))
     )
     
     )
@@ -306,8 +307,8 @@
                 (callback (lambda (button event)
                         (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
                          (else (send list-box set (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))
-                               (for/list ([i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))] [j lines]) (cond ((boolean? (assoc i (send j train_station)))) (else (send j line_name_get))))      
                                (for/list ( [i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
+                               (for/list ([i (for/list ([j (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
                                )(send frame2 show #t) (send frame show #f))
                           )))))
 (define message (new message%
@@ -336,6 +337,6 @@
                       (columns (list "Train station" "Train line" "Step free"))))
 
 (send list-box set-column-width	 0 140 100 300)
-(send list-box set-column-width	 1 125 100 300)
-(send list-box set-column-width	 2 175 100 300)
+(send list-box set-column-width	 1 175 100 300)
+(send list-box set-column-width	 2 125 100 300)
 (send frame show #t)
