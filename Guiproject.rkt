@@ -2,7 +2,7 @@
 (define train_line%
   (class object%
     (super-new)
-    (init-field (line_name "")(train_stations (list )))
+    (init-field (line_name "")(train_stations (list )) (train_connections (list )))
     (define/public train_station_get(λ () (void)))
     (define/public line_name_get(λ () line_name))
     (define/public train_stations_get(λ () (for/list ([ i train_stations]) (car i))))
@@ -17,7 +17,40 @@
   ("Stockwell" #f) ("Oval" #f) ("Battersea Power Station" #f) ("Waterloo" #f) ("Embankment" #f) ("Charing Cross" #f) ("Leicester Square" #f) ("Goodge Street" #f) ("Warren Street" #f) ("Mornington Crescent" #f) ("Chalk Farm" #f)
   ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Battersea" #t) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston" #t)
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
-  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]))
+  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]
+                          [train_connections (list
+                                           (list "Mordern" "South Wimbledon")
+                                           (list "South Wimbledon" "Colliers Wood") (list "South Wimbledon" "Mordern")
+                                           (list "Colliers Wood" "Tooting Broadway") (list "Colliers Wood" "South Wimbledon")
+                                           (list "Tooting Broadway" "Tooting Bec") (list "Tooting Broadway" "Colliers Wood")
+                                           (list "Tooting Bec" "Balham") (list "Tooting Bec" "Tooting Broadway")
+                                           (list "Balham" "Clapham South") (list "Balham" "Tooting Bec")
+                                           (list "Clapham South" "Clapham Common") (list "Clapham South" "Balham")
+                                           (list "Clapham Common" "Clapham North") (list "Clapham Common" "Clapham South")
+                                           (list "Clapham North" "Stockwell") (list "Clapham North" "Clapham Common")
+                                           (list "Stockwell" "Oval") (list "Stockwell" "Clapham North")
+                                           (list "Oval" "Kennington") (list "Oval" "Stockwell")
+                                           (list "Kennington" "Waterloo") (list "Kennington" "Elephant & Castle") (list "Kennington" "Oval")
+                                           
+                                           (list "Waterloo" "Embankment") (list "Waterloo" "Kennington")
+                                           (list "Embankment" "Charing Cross") (list "Embankment" "Waterloo")
+                                           (list "Charing Cross" "Leicester Square") (list "Charing Cross" "Embankment")
+                                           (list "Leicester Square" "Tottenham Court Road") (list "Leicester Square" "Charing Cross")
+                                           (list "Tottenham Court Road" "Goodge Street") (list "Tottenham Court Road" "Leicester Square")
+                                           (list "Goodge Street" "Warren Street") (list "Goodge Street" "Tottenham Court Road")
+                                           (list "Warrent Street" "Euston") (list "Warren Street" "Goodge Street")
+
+                                           (list "Elephant & Castle" "Borough") (list "Elephant & Castle" "Kennington")
+                                           (list "Borough" "London Bridge") (list "Borough" "Elephant & Castle")
+                                           (list "London Bridge" "Bank") (list "London Bridge" "Borough")
+                                           (list "Bank" "Moorgate") (list "Bank" "London Bridge")
+                                           (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
+                                           (list "Old Street" "Angel") (list "Old Street" "Moorgate")
+                                           (list "Angel" "King's Cross St. Pancras") (list "Angel" "Old Street")
+                                           (list "King's Cross St. Pancras" "Euston") (list "King's Cross St. Pancras")
+                                           )]
+                          )
+  )
 
 (define lines(list northern_line))
 
