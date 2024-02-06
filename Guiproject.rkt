@@ -2,7 +2,8 @@
 (define train_line%
   (class object%
     (super-new)
-    (init-field (line_name "")(train_stations (list )) (train_connections (list )))
+    (init-field (line_name "")(train_stations (list )))
+    (define/public train_station(λ () train_stations) )
     (define/public train_station_get(λ () (void)))
     (define/public line_name_get(λ () line_name))
     (define/public train_stations_get(λ () (for/list ([ i train_stations]) (car i))))
@@ -17,42 +18,13 @@
   ("Stockwell" #f) ("Oval" #f) ("Battersea Power Station" #f) ("Waterloo" #f) ("Embankment" #f) ("Charing Cross" #f) ("Leicester Square" #f) ("Goodge Street" #f) ("Warren Street" #f) ("Mornington Crescent" #f) ("Chalk Farm" #f)
   ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Battersea" #t) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston" #t)
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
-  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]
-                          [train_connections (list
-                                           (list "Mordern" "South Wimbledon")
-                                           (list "South Wimbledon" "Colliers Wood") (list "South Wimbledon" "Mordern")
-                                           (list "Colliers Wood" "Tooting Broadway") (list "Colliers Wood" "South Wimbledon")
-                                           (list "Tooting Broadway" "Tooting Bec") (list "Tooting Broadway" "Colliers Wood")
-                                           (list "Tooting Bec" "Balham") (list "Tooting Bec" "Tooting Broadway")
-                                           (list "Balham" "Clapham South") (list "Balham" "Tooting Bec")
-                                           (list "Clapham South" "Clapham Common") (list "Clapham South" "Balham")
-                                           (list "Clapham Common" "Clapham North") (list "Clapham Common" "Clapham South")
-                                           (list "Clapham North" "Stockwell") (list "Clapham North" "Clapham Common")
-                                           (list "Stockwell" "Oval") (list "Stockwell" "Clapham North")
-                                           (list "Oval" "Kennington") (list "Oval" "Stockwell")
-                                           (list "Kennington" "Waterloo") (list "Kennington" "Elephant & Castle") (list "Kennington" "Oval")
-                                           
-                                           (list "Waterloo" "Embankment") (list "Waterloo" "Kennington")
-                                           (list "Embankment" "Charing Cross") (list "Embankment" "Waterloo")
-                                           (list "Charing Cross" "Leicester Square") (list "Charing Cross" "Embankment")
-                                           (list "Leicester Square" "Tottenham Court Road") (list "Leicester Square" "Charing Cross")
-                                           (list "Tottenham Court Road" "Goodge Street") (list "Tottenham Court Road" "Leicester Square")
-                                           (list "Goodge Street" "Warren Street") (list "Goodge Street" "Tottenham Court Road")
-                                           (list "Warrent Street" "Euston") (list "Warren Street" "Goodge Street")
+  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]))
 
-                                           (list "Elephant & Castle" "Borough") (list "Elephant & Castle" "Kennington")
-                                           (list "Borough" "London Bridge") (list "Borough" "Elephant & Castle")
-                                           (list "London Bridge" "Bank") (list "London Bridge" "Borough")
-                                           (list "Bank" "Moorgate") (list "Bank" "London Bridge")
-                                           (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
-                                           (list "Old Street" "Angel") (list "Old Street" "Moorgate")
-                                           (list "Angel" "King's Cross St. Pancras") (list "Angel" "Old Street")
-                                           (list "King's Cross St. Pancras" "Euston") (list "King's Cross St. Pancras")
-                                           )]
-                          )
-  )
-
-(define lines(list northern_line))
+(define victoria_line(new train_line% [line_name "Victoria Line"] [train_stations '( ("Brixton" #t) ("Stockwell" #t)  ("Vauxhall" #t)  ("Pimlico" #f)  ("Victoria" #t)    ("Green Park" #t)
+                          ("Oxford Circus" #t) ("Warren Street" #f)  ("Euston" #t)  ("King's Cross St Pancras" #t)
+                          ("Highbury & Islington" #f)  ("Finsbury Park" #t)  ("Seven Sisters" #f)  ("Tottenham Hale" #t)
+                          ("Blackhorse Road" #f)  ("Walthamstow Central" #f) )]))
+(define lines(list northern_line victoria_line))
 
 (require racket/gui/base)
 
@@ -316,7 +288,8 @@
        [label  "                          "]
        [choices train_lines2]
        [font font_app]
-       [callback (λ (c e) (cond ((equal? (send line2 get-string (send line2 get-selection)) "Victoria Line") (send destination clear)(for ([i train_lines3]) (send destination append i)))))]))
+       [callback (λ (c e) (cond ((equal? (send line2 get-string (send line2 get-selection)) "Northern Line") (send destination clear)(for ([i train_lines]) (send destination append i)))
+                            ((equal? (send line2 get-string (send line2 get-selection)) "Victoria Line") (send destination clear)(for ([i train_lines3]) (send destination append i)))))]))
 
 (send starting_location set-selection (random 10))
 (send destination set-selection (random 10))
@@ -332,7 +305,10 @@
    	 	(min-height 43)
                 (callback (lambda (button event)
                         (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
-                         (else (send list-box set (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))))(send frame2 show #t) (send frame show #f))
+                         (else (send list-box set (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))
+                               (for/list ([i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))] [j lines]) (cond ((boolean? (assoc i (send j train_station)))) (else (send j line_name_get))))      
+                               (for/list ( [i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
+                               )(send frame2 show #t) (send frame show #f))
                           )))))
 (define message (new message%
                      (parent panel2)
@@ -357,9 +333,9 @@
                       (choices '()  )
                       (font font_app)
                       (style (list 'single 'variable-columns 'column-headers ))
-                      (columns (list "Train station" ))))
-;"Train line" "Step free"
+                      (columns (list "Train station" "Train line" "Step free"))))
+
 (send list-box set-column-width	 0 140 100 300)
-;(send list-box set-column-width	 1 125 100 300)
-;(send list-box set-column-width	 2 175 100 300)
+(send list-box set-column-width	 1 125 100 300)
+(send list-box set-column-width	 2 175 100 300)
 (send frame show #t)
