@@ -18,6 +18,9 @@
   ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Battersea" #t) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston" #t)
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
   ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]))
+
+(define lines(list northern_line))
+
 (require racket/gui/base)
 
 (define a-graph (list
@@ -295,7 +298,7 @@
                         [font font_app]
    	 	(min-height 43)
                 (callback (lambda (button event)
-                        (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (send message set-label "!!!Starting location and desination the same!!!"))
+                        (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
                          (else (send list-box set (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))))(send frame2 show #t) (send frame show #f))
                           )))))
 (define message (new message%
