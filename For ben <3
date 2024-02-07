@@ -31,3 +31,4 @@
                                            (list "Angel" "King's Cross St Pancras") (list "Angel" "Old Street")
                                            (list "King's Cross St Pancras" "Euston") (list "King's Cross St Pancras" "Angel")
                                            )))
+(fewest-vertices-path lines "Morden" "Warren Street")
