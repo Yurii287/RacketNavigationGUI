@@ -1,5 +1,5 @@
 (require graph)
-
+;remember to update the 2 other send lists, the for loops with the new code
 (define lines(unweighted-graph/directed (list
                                            (list "Morden" "South Wimbledon")
                                            (list "South Wimbledon" "Colliers Wood") (list "South Wimbledon" "Mordern")
