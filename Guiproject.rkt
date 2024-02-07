@@ -48,8 +48,8 @@
                                            (list "Bank" "Moorgate") (list "Bank" "London Bridge")
                                            (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
                                            (list "Old Street" "Angel") (list "Old Street" "Moorgate")
-                                           (list "Angel" "King's Cross St. Pancras") (list "Angel" "Old Street")
-                                           (list "King's Cross St. Pancras" "Euston") (list "King's Cross St. Pancras")
+                                           (list "Angel" "King's Cross St Pancras") (list "Angel" "Old Street")
+                                           (list "King's Cross St Pancras" "Euston") (list "King's Cross St Pancras")
                                            )]
                           )
   )
@@ -103,12 +103,12 @@
 
 (define branch (lambda (n graph branch-nodes)
                  (cond
-                   ([equal? n "E"] branch-nodes)
-                   ([not (equal? n "E")] (branch (first (children n graph)) graph (cons n branch-nodes)))
+                   ([equal? n "Kennington"] branch-nodes)
+                   ([not (equal? n "Kennington")] (branch (first (children n graph)) graph (cons n branch-nodes)))
                    )
                  )
   )
-
+ 
 (define get-path1 (lambda (n1 n2 graph directions)
                    (cond
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (remove-duplicates (reverse directions)))
@@ -340,8 +340,8 @@
                 (callback (lambda (button event)
                         (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
                          (else (send list-box set (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())
-                               (for/list ( [i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
-                               (for/list ([i (for/list ([j (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
+                               (for/list ( [i (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
+                               (for/list ([i (for/list ([j (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
                                )(send frame2 show #t) (send frame show #f))
                           )))))
 (define message (new message%
