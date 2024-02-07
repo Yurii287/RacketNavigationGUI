@@ -2,10 +2,10 @@
 (define train_line%
   (class object%
     (super-new)
-    (init-field (line_name "")(train_stations (list )))
+    (init-field (line_name "")(train_stations (list )) (train_connections (list)))
     (define/public train_station(λ () train_stations) )
-    (define/public train_station_get(λ () (void)))
     (define/public line_name_get(λ () line_name))
+    (define/public train_connections_get (lambda () train_connections))
     (define/public train_stations_get(λ () (for/list ([ i train_stations]) (car i))))
     (define/public step_free_get(λ (x) (for/list ([i x]) (cond ((equal? #t (first(cdr (assoc i train_stations)))) "Yes") (else "No")   ))))
     (define/public step_free(λ (x) (cond ( (pair? (assoc x train_stations))(first (cdr (assoc x train_stations)))) (else #f)) ))
@@ -15,11 +15,44 @@
 (define northern_line(new train_line%
                           [line_name "Northern Line"]
                           [train_stations '(
-  ( "South Wimbledon" #f) ("Colliers Wood" #f) ("Tooting Broadway" #f) ( "Tooting Bec" #f) ("Balham" #f) ("Clapham South" #f) ("Clapham Common" #f) ("Clapham North" #f)
+  ("South Wimbledon" #f) ("Colliers Wood" #f) ("Tooting Broadway" #f) ( "Tooting Bec" #f) ("Balham" #f) ("Clapham South" #f) ("Clapham Common" #f) ("Clapham North" #f)
   ("Stockwell" #f) ("Oval" #f) ("Battersea Power Station" #f) ("Waterloo" #f) ("Embankment" #f) ("Charing Cross" #f) ("Leicester Square" #f) ("Goodge Street" #f) ("Warren Street" #f) ("Mornington Crescent" #f) ("Chalk Farm" #f)
   ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Battersea" #t) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston" #t)
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
-  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]))
+  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]
+                          [train_connections (list
+                                           (list "Mordern" "South Wimbledon")
+                                           (list "South Wimbledon" "Colliers Wood") (list "South Wimbledon" "Mordern")
+                                           (list "Colliers Wood" "Tooting Broadway") (list "Colliers Wood" "South Wimbledon")
+                                           (list "Tooting Broadway" "Tooting Bec") (list "Tooting Broadway" "Colliers Wood")
+                                           (list "Tooting Bec" "Balham") (list "Tooting Bec" "Tooting Broadway")
+                                           (list "Balham" "Clapham South") (list "Balham" "Tooting Bec")
+                                           (list "Clapham South" "Clapham Common") (list "Clapham South" "Balham")
+                                           (list "Clapham Common" "Clapham North") (list "Clapham Common" "Clapham South")
+                                           (list "Clapham North" "Stockwell") (list "Clapham North" "Clapham Common")
+                                           (list "Stockwell" "Oval") (list "Stockwell" "Clapham North")
+                                           (list "Oval" "Kennington") (list "Oval" "Stockwell")
+                                           (list "Kennington" "Waterloo") (list "Kennington" "Elephant & Castle") (list "Kennington" "Oval")
+
+                                           (list "Waterloo" "Embankment") (list "Waterloo" "Kennington")
+                                           (list "Embankment" "Charing Cross") (list "Embankment" "Waterloo")
+                                           (list "Charing Cross" "Leicester Square") (list "Charing Cross" "Embankment")
+                                           (list "Leicester Square" "Tottenham Court Road") (list "Leicester Square" "Charing Cross")
+                                           (list "Tottenham Court Road" "Goodge Street") (list "Tottenham Court Road" "Leicester Square")
+                                           (list "Goodge Street" "Warren Street") (list "Goodge Street" "Tottenham Court Road")
+                                           (list "Warrent Street" "Euston") (list "Warren Street" "Goodge Street")
+
+                                           (list "Elephant & Castle" "Borough") (list "Elephant & Castle" "Kennington")
+                                           (list "Borough" "London Bridge") (list "Borough" "Elephant & Castle")
+                                           (list "London Bridge" "Bank") (list "London Bridge" "Borough")
+                                           (list "Bank" "Moorgate") (list "Bank" "London Bridge")
+                                           (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
+                                           (list "Old Street" "Angel") (list "Old Street" "Moorgate")
+                                           (list "Angel" "King's Cross St. Pancras") (list "Angel" "Old Street")
+                                           (list "King's Cross St. Pancras" "Euston") (list "King's Cross St. Pancras")
+                                           )]
+                          )
+  )
 
 (define victoria_line(new train_line% [line_name "Victoria Line"] [train_stations '( ("Brixton" #t) ("Stockwell" #t)  ("Vauxhall" #t)  ("Pimlico" #f)  ("Victoria" #t)    ("Green Park" #t)
                           ("Oxford Circus" #t) ("Warren Street" #f)  ("Euston" #t)  ("King's Cross St Pancras" #t)
@@ -80,9 +113,9 @@
                    (cond
                      ([and (not (not (member n1 directions))) (not (not (member n2 directions)))] (remove-duplicates (reverse directions)))
                      ([not (not (member n2 (children n1 graph)))] (get-path1 n1 n2 graph (cons n2 (cons n1 directions))))
-                     ([and (equal? n1 "E") (not (not (member n2 (branch "A" graph '()))))] (get-path1 (second (children "E" graph)) n2 graph (cons n1 directions)))
-                     ([and (equal? n1 "E") (not (not (member n2 (branch "B" graph '()))))] (get-path1 (third (children "E" graph)) n2 graph (cons n1 directions))) 
-                     ([and (equal? n1 "E") (not (not (member n2 (branch "G" graph '()))))] (get-path1 (first (children "E" graph)) n2 graph (cons n1 directions))) 
+                     ([and (equal? n1 "Kennington") (not (not (member n2 (branch "A" graph '()))))] (get-path1 (second (children "E" graph)) n2 graph (cons n1 directions)))
+                     ([and (equal? n1 "Kennington") (not (not (member n2 (branch "B" graph '()))))] (get-path1 (third (children "E" graph)) n2 graph (cons n1 directions))) 
+                     ([and (equal? n1 "Kennington") (not (not (member n2 (branch "G" graph '()))))] (get-path1 (first (children "E" graph)) n2 graph (cons n1 directions))) 
                      ([not (not (member (first (children n1 graph)) directions))] (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      (else (get-path1 (first (children n1 graph)) n2 graph (cons n1 directions)))
                      )
@@ -306,7 +339,7 @@
    	 	(min-height 43)
                 (callback (lambda (button event)
                         (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
-                         (else (send list-box set (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))
+                         (else (send list-box set (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())
                                (for/list ( [i (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
                                (for/list ([i (for/list ([j (get-path (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
                                )(send frame2 show #t) (send frame show #f))
