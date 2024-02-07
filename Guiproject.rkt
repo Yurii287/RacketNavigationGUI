@@ -1,4 +1,5 @@
 #lang racket/gui
+(require graph)
 (define train_line%
   (class object%
     (super-new)
@@ -21,7 +22,7 @@
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
   ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t))]
                           [train_connections (list
-                                           (list "Mordern" "South Wimbledon")
+                                           (list "Morden" "South Wimbledon")
                                            (list "South Wimbledon" "Colliers Wood") (list "South Wimbledon" "Mordern")
                                            (list "Colliers Wood" "Tooting Broadway") (list "Colliers Wood" "South Wimbledon")
                                            (list "Tooting Broadway" "Tooting Bec") (list "Tooting Broadway" "Colliers Wood")
@@ -40,7 +41,7 @@
                                            (list "Leicester Square" "Tottenham Court Road") (list "Leicester Square" "Charing Cross")
                                            (list "Tottenham Court Road" "Goodge Street") (list "Tottenham Court Road" "Leicester Square")
                                            (list "Goodge Street" "Warren Street") (list "Goodge Street" "Tottenham Court Road")
-                                           (list "Warrent Street" "Euston") (list "Warren Street" "Goodge Street")
+                                           (list "Warren Street" "Euston") (list "Warren Street" "Goodge Street")
 
                                            (list "Elephant & Castle" "Borough") (list "Elephant & Castle" "Kennington")
                                            (list "Borough" "London Bridge") (list "Borough" "Elephant & Castle")
@@ -49,7 +50,7 @@
                                            (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
                                            (list "Old Street" "Angel") (list "Old Street" "Moorgate")
                                            (list "Angel" "King's Cross St Pancras") (list "Angel" "Old Street")
-                                           (list "King's Cross St Pancras" "Euston") (list "King's Cross St Pancras")
+                                           (list "King's Cross St Pancras" "Euston") (list "King's Cross St Pancras" "Angel")
                                            )]
                           )
   )
@@ -339,9 +340,9 @@
    	 	(min-height 43)
                 (callback (lambda (button event)
                         (cond ((equal? (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection))) (message-box "Error" "Starting location and destination are the same." frame '(stop ok)))
-                         (else (send list-box set (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())
-                               (for/list ( [i (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
-                               (for/list ([i (for/list ([j (get-path1 (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)) (send northern_line train_connections_get) '())])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
+                         (else (send list-box set (fewest-vertices-path (unweighted-graph/directed (send northern_line train_connections_get)) (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))
+                               (for/list ( [i (fewest-vertices-path (unweighted-graph/directed (send northern_line train_connections_get)) (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))]) (string-join (for/list ([i (filter (λ (x) (list? (assoc i (send x train_station)))) lines)])  (send i line_name_get))))
+                               (for/list ([i (for/list ([j (fewest-vertices-path (unweighted-graph/directed (send northern_line train_connections_get)) (send starting_location get-string (send starting_location get-selection)) (send destination get-string (send destination get-selection)))])(for/or ([i (for/list ([i lines]) (send i step_free j))]) i))]) (cond ((equal? i #t) "Yes") (else "No")))
                                )(send frame2 show #t) (send frame show #f))
                           )))))
 (define message (new message%
