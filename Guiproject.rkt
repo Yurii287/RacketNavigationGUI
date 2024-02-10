@@ -1,11 +1,11 @@
 #lang racket/gui
-
+(require graph)
 ;M00861483(Thomas),
 ;M00874096(Ben), 
 ;M00664455 (Ahmed),
 ;M00985657(Wissam)
-
-(require graph)
+;Section1 Class
+;Northern Line implemented, Victoria line not implemented
 (define train_line%
   (class object%
     (super-new)
@@ -24,9 +24,9 @@
                           [train_stations '(
   ("South Wimbledon" #f) ("Colliers Wood" #f) ("Tooting Broadway" #f) ( "Tooting Bec" #f) ("Balham" #f) ("Clapham South" #f) ("Clapham Common" #f) ("Clapham North" #f)
   ("Stockwell" #f) ("Oval" #f) ("Battersea Power Station" #f) ("Waterloo" #f) ("Embankment" #f) ("Charing Cross" #f) ("Leicester Square" #f) ("Goodge Street" #f) ("Warren Street" #f) ("Mornington Crescent" #f) ("Chalk Farm" #f)
-  ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Battersea" #t) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston" #t)
+  ("Belsize Park" #f) ("Hampstead" #f) ("Brent Cross" #f) ("Colindale" #f) ("Burnt Oak" #f) ("Borough" #t) ("Camden Town" #t) ("Edgware" #t) ("Elephant & Castle" #t) ("Euston(Bank)" #t) ("Euston(Embankment)" #t)
   ("Finchley Central" #t) ("Golders Green" #t) ( "Hendon Central" #t) ("High Barnet" #t) ("Kennington" #t) ("King's Cross St Pancras" #t) ("London Bridge" #t) ("Mill Hill East" #t) ("Moorgate" #t) ("Morden" #t)
-  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t) ("Old Street" #f) ("Bank" #f) ("Angel" #f) ("Kentish Town" #f) ("Archway" #f) ("Tufnell Park" #f) ("East Finchley" #f) ("Highgate" #f))]
+  ("Nine Elms" #t) ("StockWell" #t) ("Tottenham Court Road" #t) ("West Finchley" #t) ("Woodside Park" #t) ("Old Street" #f) ("Bank" #f) ("Angel" #f) ("Kentish Town" #f) ("Archway" #f) ("Tufnell Park" #f) ("East Finchley" #f) ("Highgate" #f) ("Totteridge & Whetstone" #f))]
                           [train_connections (list
                                            ;Morden Branch
                                            (list "Morden" "South Wimbledon")
@@ -49,8 +49,8 @@
                                            (list "Leicester Square" "Tottenham Court Road") (list "Leicester Square" "Charing Cross")
                                            (list "Tottenham Court Road" "Goodge Street") (list "Tottenham Court Road" "Leicester Square")
                                            (list "Goodge Street" "Warren Street") (list "Goodge Street" "Tottenham Court Road")
-                                           (list "Warren Street" "Euston") (list "Warren Street" "Goodge Street")
-                                           (list "Euston" "Warren Street")
+                                           (list "Warren Street" "Euston(Embankment)") (list "Warren Street" "Goodge Street")
+                                           (list "Euston(Embankment)" "Warren Street")
 
                                            ;Bank Branch
                                            (list "Elephant & Castle" "Borough") (list "Elephant & Castle" "Kennington")
@@ -60,11 +60,13 @@
                                            (list "Moorgate" "Old Street") (list "Moorgate" "Bank")
                                            (list "Old Street" "Angel") (list "Old Street" "Moorgate")
                                            (list "Angel" "King's Cross St Pancras") (list "Angel" "Old Street") 
-                                           (list "King's Cross St Pancras" "Euston") (list "King's Cross St Pancras" "Angel")
+                                           (list "King's Cross St Pancras" "Euston(Bank)")  (list "Euston(Bank)" "King's Cross St Pancras") (list "King's Cross St Pancras" "Angel")
                                            
-                                           ;The weird part 
-                                           (list "Euston" "Mornington Crescent") (list "Euston" "Camden Town")
-                                           (list "Mornington Crescent" "Euston") (list "Camden Town" "Euston")
+                                           ;The weird part
+                                           (list "Euston(Bank)" "Camden Town")(list "Camden Town" "Euston(Bank)" )
+                                           (list "Euston(Bank)" "Euston(Embankment)")(list "Euston(Embankment)" "Euston(Bank)")
+                                           (list "Euston(Embankment)" "Mornington Crescent") (list "Euston(Embankment)" "Camden Town")
+                                           (list "Mornington Crescent" "Euston(Embankment)") (list "Camden Town" "Euston(Embankment)")
                                            (list "Camden Town" "Mornington Crescent")  (list "Camden Town" "Chalk farm")
                                            (list "Mornington Crescent" "Camden Town")
 
@@ -91,10 +93,8 @@
                                            (list "West Finchley" "Woodside Park") (list "Woodside Park" "West Finchley")
                                            (list "Woodside Park" "Totteridge & Whetstone") (list "Totteridge & Whetstone" "Woodside Park")
                                            (list "Totteridge & Whetstone" "High Barnet")(list "High Barnet" "Totteridge & Whetstone")
-                                           )]
-                          )
-  )
-
+                                           )]))
+;Victoria line, not implemented fully
 (define victoria_line(new train_line% [line_name "Victoria Line"] [train_stations '( ("Brixton" #t) ("Stockwell" #t)  ("Vauxhall" #t)  ("Pimlico" #f)  ("Victoria" #t)    ("Green Park" #t)
                           ("Oxford Circus" #t) ("Warren Street" #f)  ("Euston" #t)  ("King's Cross St Pancras" #t)
                           ("Highbury & Islington" #f)  ("Finsbury Park" #t)  ("Seven Sisters" #f)  ("Tottenham Hale" #t)
@@ -104,24 +104,14 @@
 ;Train stations
 ;Northern line
 (define train_lines(send northern_line train_stations_get))
-;Victoria line
-(define train_lines3(list "Brixton" "Stockwell"  "Vauxhall"  "Pimlico"  "Victoria"    "Green Park"
-                          "Oxford Circus" "Warren Street"  "Euston"  "King's Cross St. Pancras"
-                          "Highbury & Islington"  "Finsbury Park"  "Seven Sisters"  "Tottenham Hale"
-                          "Blackhorse Road"  "Walthamstow Central" ))
-;List of TFL trainlines
-(define train_lines2(list (send northern_line line_name_get) "Bakerloo Line" "Central Line" "Circle Line" "District Line"
-                          "Hammersmith & City Line" "Jubilee Line" "Metropolitan Line Tube" "Northern Line"
-                          "Piccadilly Line" "Victoria Line" "Waterloo & City Line"))
-;S1
+;List of TFL trainlines names
+(define train_lines2(for/list ([i lines]) (send i line_name_get)))
+
 (define font_app(make-font #:size 12 #:family 'decorative #:weight 'normal))
 
 (define journey(list "Hendon Central" "Brent Cross"))
-
- ;(send my-box get-string (send my-box get-selection))
-; (for/list ([i '("Morden" "Brixton")]) (cond ((empty? (filter (λ (x) (equal? x i)) train_lines3)) "No") (else "Yes")))
-(define choiceschoices(list "Field" "field" "field"))
-
+;Section2 frames panels and classes
+;The basic conscruction of the gui windows
 (define frame (new frame% [label "Easy Access TFL"]
                    [alignment '(left top)]
                    [stretchable-width #f]	 
@@ -157,7 +147,7 @@
                 (send dc draw-text "Easy Access TFL" 0 0))]
              [vert-margin 0]	 
    	 	[horiz-margin 0])
-;S2
+
 (new canvas% [parent frame2]
      [min-height 30]
      [min-width 100]
@@ -254,7 +244,7 @@
                    [alignment '(center bottom)]
                    [stretchable-height #f]))
 
-;S6                       
+;S3 Choice boxes                       
 (define starting_location
   (new choice% [parent panel1]
        [vert-margin 40]
@@ -269,7 +259,7 @@
        [choices train_lines2]
        [font font_app]
        [callback (λ (c e) (cond ((equal? (send line get-string (send line get-selection)) "Northern Line") (send starting_location clear)(for ([i train_lines]) (send starting_location append i)))
-                            ((equal? (send line get-string (send line get-selection)) "Victoria Line") (send starting_location clear)(for ([i train_lines3]) (send starting_location append i)))
+                            ((equal? (send line get-string (send line get-selection)) "Victoria Line") (send starting_location clear)(for ([i (send victoria_line train_stations_get)]) (send starting_location append i)))
                                 
                                 ))]))
 
@@ -282,11 +272,12 @@
 (define line2
   (new choice% [parent panel2]
        [vert-margin 40]
-       [label  "                          "]
+       [horiz-margin 60]
+       [label  "         "]
        [choices train_lines2]
        [font font_app]
        [callback (λ (c e) (cond ((equal? (send line2 get-string (send line2 get-selection)) "Northern Line") (send destination clear)(for ([i train_lines]) (send destination append i)))
-                            ((equal? (send line2 get-string (send line2 get-selection)) "Victoria Line") (send destination clear)(for ([i train_lines3]) (send destination append i)))))]))
+                            ((equal? (send line2 get-string (send line2 get-selection)) "Victoria Line") (send destination clear)(for ([i (send victoria_line train_stations_get)]) (send destination append i)))))]))
 
 (send starting_location set-selection (random 10))
 (send destination set-selection (random 10))
